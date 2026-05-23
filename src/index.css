@@ -1,0 +1,248 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'Inter Variable';
+  src: url('https://cdn.thekzbn.name.ng/assets/font/InterVariable.woff2') format('woff2'),
+       url('https://cdn.thekzbn.name.ng/assets/font/InterVariable.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter Variable';
+  src: url('https://cdn.thekzbn.name.ng/assets/font/InterVariable-Italic.woff2') format('woff2'),
+       url('https://cdn.thekzbn.name.ng/assets/font/InterVariable-Italic.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono Variable';
+  src: url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..800&display=swap');
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  /* color system */
+  --color-start: hsl(var(--start));
+  --color-end: hsl(var(--end));
+  --color-cornflower: hsl(var(--cornflower));
+  --color-charcoal: hsl(var(--charcoal));
+  --color-ocean: hsl(var(--ocean));
+  --color-alert: hsl(var(--alert));
+  --color-go: hsl(var(--go));
+
+  /* semantic mappings */
+  --color-background: var(--color-start);
+  --color-foreground: var(--color-charcoal);
+  --color-border: var(--color-cornflower);
+
+  /* typography */
+  --font-sans: 'Inter Variable', 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', monospace;
+
+  /* spacing scale */
+  --spacing-tiny: 0.25rem;
+  --spacing-btn: 0.5rem;
+  --spacing-component: 0.75rem;
+  --spacing-group: 1rem;
+  --spacing-section: 1.5rem;
+  --spacing-page: 3rem;
+
+  /* restricted radii */
+  --radius-lg: 1rem;
+  --radius-md: 0.5rem;
+  --radius-sm: 0.25rem;
+
+  /* custom widths */
+  --spacing-readable: 65ch;
+
+  /* motion */
+  --animate-q-fade-up: q-fade-up 0.5s cubic-bezier(0.57, -0.01, 0.21, 0.89) forwards;
+  --animate-q-fade-in: q-fade-in 0.5s cubic-bezier(0.57, -0.01, 0.21, 0.89) forwards;
+
+  --ease-quing: cubic-bezier(0.57, -0.01, 0.21, 0.89);
+}
+
+@layer base {
+  :root {
+    --start: 0 0% 100%;
+    --end: 218 26% 11%;
+    --cornflower: 216 12% 73%;
+    --charcoal: 199 47% 24%;
+    --ocean: 220 12% 66%;
+    --alert: 9 100% 64%;
+    --go: 146 50% 47%;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --start: 218 26% 11%;
+      --end: 0 0% 100%;
+      --cornflower: 216 20% 28%;
+      --charcoal: 199 30% 59%;
+      --ocean: 216 18% 36%;
+    }
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    background: var(--color-start);
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    font-feature-settings: "cv01" 1, "cv02" 1, "cv03" 1, "cv04" 1, "cv05" 1,
+                       "cv06" 1, "cv07" 1, "cv08" 1, "cv09" 1, "cv10" 1,
+                       "cv11" 1, "cv12" 1, "cv13" 1, "cv14" 1,
+                       "liga" 1, "calt" 1, "zero" 1;
+  }
+
+  ::selection {
+    @apply bg-end text-start;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-end);
+    outline-offset: 2px;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    text-transform: lowercase;
+    font-weight: 600;
+  }
+}
+
+@layer components {
+  .q-card {
+    @apply rounded-md border border-border bg-start p-component;
+  }
+
+  .button-primary {
+    @apply inline-flex items-center gap-btn rounded-md border border-end bg-end px-group py-btn text-sm text-start transition-opacity hover:opacity-90;
+    transition-timing-function: var(--ease-quing);
+    transition-duration: 0.5s;
+  }
+
+  .button-secondary {
+    @apply inline-flex items-center gap-btn rounded-md border border-border px-group py-btn text-sm text-charcoal transition-colors hover:border-charcoal;
+    transition-timing-function: var(--ease-quing);
+    transition-duration: 0.5s;
+  }
+
+  .button-ghost {
+    @apply inline-flex items-center gap-btn rounded-md border border-transparent px-group py-btn text-sm text-ocean transition-colors hover:border-border hover:text-charcoal;
+    transition-timing-function: var(--ease-quing);
+    transition-duration: 0.5s;
+  }
+
+  .mono-meta {
+    @apply text-xs text-ocean font-sans;
+    letter-spacing: 0.05em;
+  }
+
+  .pill {
+    @apply inline-flex items-center rounded-sm border border-border px-tiny py-tiny text-[10px] text-ocean font-sans;
+  }
+
+  .workspace-heading {
+    @apply mt-component text-[4rem] font-semibold leading-none tracking-tighter text-end lowercase;
+  }
+
+  .workspace-copy-text {
+    @apply mt-component max-w-readable text-base leading-relaxed text-charcoal;
+  }
+
+  .field-row {
+    @apply flex items-center gap-btn rounded-md border border-border px-btn py-btn;
+  }
+
+  .field-input {
+    @apply min-w-0 flex-1 border-0 bg-transparent p-0 text-sm text-charcoal placeholder:text-ocean focus:outline-none;
+  }
+
+  .sidebar-link {
+    @apply flex w-full items-center gap-btn rounded-md border border-transparent px-btn py-btn text-left text-sm text-ocean transition-colors hover:border-border hover:text-charcoal;
+    transition-timing-function: var(--ease-quing);
+    transition-duration: 0.5s;
+  }
+
+  .sidebar-link-active {
+    @apply border-end text-end;
+  }
+
+  .note-textarea {
+    @apply min-h-[32rem] w-full max-w-readable resize-none border-0 bg-transparent p-0 text-base font-normal leading-relaxed text-charcoal focus:outline-none;
+  }
+
+  .prose-preview {
+    @apply max-w-readable text-base leading-relaxed text-charcoal;
+  }
+
+  .prose-preview code {
+    @apply rounded-sm border border-border px-tiny py-tiny font-mono text-sm;
+  }
+
+  /* Utility: prose for notes / articles */
+  .q-prose {
+    max-width: 42.5rem;
+    color: var(--color-charcoal);
+    line-height: 1.65;
+  }
+  .q-prose h1 { font-size: 2.25rem; margin: 1.5rem 0 1rem; }
+  .q-prose h2 { font-size: 1.5rem; margin: 1.5rem 0 0.75rem; }
+  .q-prose h3 { font-size: 1.125rem; margin: 1rem 0 0.5rem; }
+  .q-prose p  { margin: 0.75rem 0; }
+  .q-prose code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    background: color-mix(in oklab, var(--color-cornflower) 25%, transparent);
+    padding: 0.1em 0.3em;
+    border-radius: 0.25rem;
+  }
+  .q-prose mark {
+    background: color-mix(in oklab, var(--color-go) 25%, transparent);
+    color: var(--color-end);
+    padding: 0 0.15em;
+    border-radius: 0.125rem;
+  }
+
+  /* Tiny brand mark — six-point star reminiscent of footer constellation */
+  .q-star {
+    width: 0.5rem;
+    height: 0.5rem;
+    background: var(--color-end);
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  }
+}
+
+@keyframes q-fade-up {
+  from { opacity: 0; transform: translateY(1rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes q-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
