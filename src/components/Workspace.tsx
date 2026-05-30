@@ -28,10 +28,10 @@ function toPreview(markdown: string) {
     .replace(/\n/g, '<br />')
 }
 
-import { useAuth } from '@workos-inc/authkit-react'
+import { useClerk } from '@clerk/react'
 
 export function Workspace() {
-  const { signOut } = useAuth()
+  const { signOut } = useClerk()
 
   const [activeSection, setActiveSection] = useState<'notes' | 'uploads'>('notes')
   const [activeNoteId, setActiveNoteId] = useState<Id<'notes'> | null>(null)

@@ -77,14 +77,17 @@ export function PrimaryButton({
   );
 }
 
-import { useAuth } from "@workos-inc/authkit-react";
-
-export function GoogleButton() {
-  const { signIn } = useAuth();
+export function ClerkAuthButton({
+  mode,
+  onClick,
+}: {
+  mode: "login" | "signup" | "recovery";
+  onClick: () => void;
+}) {
   return (
     <button
       type="button"
-      onClick={() => void signIn()}
+      onClick={onClick}
       className="flex w-full items-center justify-center gap-2 rounded-[0.5rem] border border-[var(--color-cornflower)] py-2 text-xs lowercase text-[var(--color-end)] transition-colors duration-500 hover:border-[var(--color-end)]"
       style={{ transitionTimingFunction: "var(--ease-quing)" }}
     >
@@ -94,7 +97,7 @@ export function GoogleButton() {
         <path fill="#FBBC05" d="M5.84 14.11A6.6 6.6 0 0 1 5.5 12c0-.73.13-1.44.34-2.11V7.05H2.18A11 11 0 0 0 1 12c0 1.78.43 3.46 1.18 4.95l3.66-2.84z"/>
         <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1A11 11 0 0 0 2.18 7.05l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z"/>
       </svg>
-      continue with google
+      {mode === "signup" ? "create account with Clerk" : "continue with Clerk"}
     </button>
   );
 }

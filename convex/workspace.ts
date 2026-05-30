@@ -1,12 +1,15 @@
-import { mutation, query } from './_generated/server'
+import { mutation, query, type MutationCtx, type QueryCtx } from './_generated/server'
 import { v } from 'convex/values'
-import { authkit } from './auth'
+
+async function getUserId(ctx: QueryCtx | MutationCtx) {
+  const identity = await ctx.auth.getUserIdentity()
+  return identity?.subject ?? null
+}
 
 export const bootstrap = query({
   args: { },
   handler: async (ctx) => {
-    const user = await authkit.getAuthUser(ctx)
-    const userId = user?.id
+    const userId = await getUserId(ctx)
     if (!userId) return { notes: [], uploads: [], subjects: [] }
 
     const [notes, uploads, subjects] = await Promise.all([
@@ -26,8 +29,7 @@ export const bootstrap = query({
 export const createSubject = mutation({
   args: { name: v.string() },
   handler: async (ctx, args) => {
-    const user = await authkit.getAuthUser(ctx)
-    const userId = user?.id
+    const userId = await getUserId(ctx)
     if (!userId) throw new Error('Unauthorized')
     return await ctx.db.insert('subjects', { name: args.name, userId })
   },
@@ -41,8 +43,7 @@ export const createUpload = mutation({
     category: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const user = await authkit.getAuthUser(ctx)
-    const userId = user?.id
+    const userId = await getUserId(ctx)
     if (!userId) throw new Error('Unauthorized')
     return await ctx.db.insert('uploads', {
       name: args.name,
@@ -58,8 +59,7 @@ export const createUpload = mutation({
 export const seedDemoData = mutation({
   args: { replace: v.optional(v.boolean()) },
   handler: async (ctx, args) => {
-    const user = await authkit.getAuthUser(ctx)
-    const userId = user?.id
+    const userId = await getUserId(ctx)
     if (!userId) throw new Error('Unauthorized')
 
     if (args.replace) {

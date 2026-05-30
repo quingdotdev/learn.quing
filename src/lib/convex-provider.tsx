@@ -1,40 +1,21 @@
-import { AuthKitProvider, useAuth } from "@workos-inc/authkit-react";
-import { ConvexProviderWithAuth, ConvexReactClient } from "convex/react";
-import { type ReactNode, useCallback, useMemo } from "react";
+import { ClerkProvider, useAuth } from "@clerk/react";
+import { ConvexProviderWithClerk } from "convex/react-clerk";
+import { ConvexReactClient } from "convex/react";
+import { type ReactNode } from "react";
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
+const clerkPublishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY as string | undefined;
 
 export function ConvexRootProvider({ children }: { children: ReactNode }) {
+  if (!clerkPublishableKey) {
+    throw new Error("Missing VITE_CLERK_PUBLISHABLE_KEY in your environment.");
+  }
+
   return (
-    <AuthKitProvider clientId={import.meta.env.VITE_WORKOS_CLIENT_ID}>
-      <ConvexBridge client={convex}>
+    <ClerkProvider publishableKey={clerkPublishableKey}>
+      <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
         {children}
-      </ConvexBridge>
-    </AuthKitProvider>
+      </ConvexProviderWithClerk>
+    </ClerkProvider>
   );
-}
-
-function ConvexBridge({ client, children }: { client: ConvexReactClient, children: ReactNode }) {
-    const { user, isLoading, getAccessToken } = useAuth();
-
-    const fetchAccessToken = useCallback(async ({ forceRefreshToken }: { forceRefreshToken: boolean }) => {
-        try {
-            return await getAccessToken({ forceRefresh: forceRefreshToken });
-        } catch (e) {
-            console.error("Failed to get WorkOS access token", e);
-            return null;
-        }
-    }, [getAccessToken]);
-
-    const authState = useMemo(() => ({
-        isLoading,
-        isAuthenticated: !!user,
-        fetchAccessToken,
-    }), [isLoading, user, fetchAccessToken]);
-
-    return (
-        <ConvexProviderWithAuth client={client} useAuth={() => authState}>
-            {children}
-        </ConvexProviderWithAuth>
-    );
 }

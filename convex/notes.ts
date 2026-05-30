@@ -1,14 +1,17 @@
-import { mutation, query } from './_generated/server'
+import { mutation, query, type MutationCtx, type QueryCtx } from './_generated/server'
 import { v } from 'convex/values'
-import { authkit } from './auth'
+
+async function getUserId(ctx: QueryCtx | MutationCtx) {
+  const identity = await ctx.auth.getUserIdentity()
+  return identity?.subject ?? null
+}
 
 export const list = query({
   args: { 
     subject: v.optional(v.string()) 
   },
   handler: async (ctx, args) => {
-    const user = await authkit.getAuthUser(ctx)
-    const userId = user?.id
+    const userId = await getUserId(ctx)
     if (!userId) return []
 
     let q = ctx.db
@@ -27,8 +30,7 @@ export const list = query({
 export const get = query({
   args: { id: v.id('notes') },
   handler: async (ctx, args) => {
-    const user = await authkit.getAuthUser(ctx)
-    const userId = user?.id
+    const userId = await getUserId(ctx)
     const note = await ctx.db.get(args.id)
     if (!note || note.userId !== userId) return null
     return note
@@ -41,8 +43,7 @@ export const create = mutation({
     subject: v.string(),
   },
   handler: async (ctx, args) => {
-    const user = await authkit.getAuthUser(ctx)
-    const userId = user?.id
+    const userId = await getUserId(ctx)
     if (!userId) throw new Error('Unauthorized')
 
     return await ctx.db.insert('notes', {
@@ -65,8 +66,7 @@ export const updateMetadata = mutation({
     subject: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const user = await authkit.getAuthUser(ctx)
-    const userId = user?.id
+    const userId = await getUserId(ctx)
     const note = await ctx.db.get(args.id)
     if (!note || note.userId !== userId) throw new Error('Unauthorized')
 
@@ -86,8 +86,7 @@ export const save = mutation({
     updatedAt: v.string(),
   },
   handler: async (ctx, args) => {
-    const user = await authkit.getAuthUser(ctx)
-    const userId = user?.id
+    const userId = await getUserId(ctx)
     const note = await ctx.db.get(args.id)
     if (!note || note.userId !== userId) throw new Error('Unauthorized')
 
@@ -106,8 +105,7 @@ export const addVideo = mutation({
     title: v.string(),
   },
   handler: async (ctx, args) => {
-    const user = await authkit.getAuthUser(ctx)
-    const userId = user?.id
+    const userId = await getUserId(ctx)
     const note = await ctx.db.get(args.id)
     if (!note || note.userId !== userId) throw new Error('Unauthorized')
 
@@ -125,8 +123,7 @@ export const addTimestamp = mutation({
     seconds: v.number(),
   },
   handler: async (ctx, args) => {
-    const user = await authkit.getAuthUser(ctx)
-    const userId = user?.id
+    const userId = await getUserId(ctx)
     const note = await ctx.db.get(args.id)
     if (!note || note.userId !== userId) throw new Error('Unauthorized')
 
@@ -146,8 +143,7 @@ export const addTimestamp = mutation({
 export const remove = mutation({
   args: { id: v.id('notes') },
   handler: async (ctx, args) => {
-    const user = await authkit.getAuthUser(ctx)
-    const userId = user?.id
+    const userId = await getUserId(ctx)
     const note = await ctx.db.get(args.id)
     if (!note || note.userId !== userId) throw new Error('Unauthorized')
     await ctx.db.delete(args.id)

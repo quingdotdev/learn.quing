@@ -3,13 +3,13 @@ import { v } from 'convex/values'
 
 export default defineSchema({
   users: defineTable({
-    authId: v.string(), // WorkOS User ID
+    authId: v.string(),
     email: v.string(),
     name: v.optional(v.string()),
   }).index('by_authId', ['authId']),
   notes: defineTable({
     title: v.string(),
-    userId: v.string(), // WorkOS User ID
+    userId: v.string(),
     subject: v.string(),
     body: v.string(),
     updatedAt: v.string(),

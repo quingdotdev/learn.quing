@@ -4,8 +4,8 @@ import { type Surface } from './data/appData'
 import { Workspace } from './components/Workspace'
 import { StarField } from './components/StarField'
 import { SiteHeader, SiteFooter } from './components/SiteChrome'
-import { AuthShell, PrimaryButton, GoogleButton } from './components/AuthShell'
-import { useAuth } from '@workos-inc/authkit-react'
+import { AuthShell, PrimaryButton, ClerkAuthButton } from './components/AuthShell'
+import { useClerk } from '@clerk/react'
 import { useConvexAuth } from 'convex/react'
 
 function LandingPage({ onSurfaceChange }: { onSurfaceChange: (surface: Surface) => void }) {
@@ -212,7 +212,14 @@ function AuthPage({
     recovery: { title: 'recover access', body: 'request a reset link.' },
   }[mode]
 
-  const { signIn } = useAuth();
+  const { openSignIn, openSignUp } = useClerk();
+  const openAuth = () => {
+    if (mode === 'signup') {
+      openSignUp({})
+      return
+    }
+    openSignIn({})
+  }
 
   return (
     <AuthShell
@@ -228,17 +235,15 @@ function AuthPage({
       }
     >
       <div className="grid gap-4">
-        <GoogleButton />
+        <ClerkAuthButton mode={mode} onClick={openAuth} />
         <div className="relative py-2">
           <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-[var(--color-cornflower)]"></div></div>
           <div className="relative flex justify-center text-[10px] uppercase tracking-widest"><span className="bg-[var(--color-start)] px-2 text-[var(--color-ocean)]">or</span></div>
         </div>
-        <PrimaryButton onClick={() => {
-            void signIn()
-          }}>
+        <PrimaryButton onClick={openAuth}>
           {mode === 'recovery' ? 'go to recovery' : 'continue to secure login'}
         </PrimaryButton>
-        <p className="text-[10px] text-ocean text-center italic">you will be redirected to our secure authentication provider.</p>
+        <p className="text-[10px] text-ocean text-center italic">your session is handled securely by Clerk.</p>
       </div>
     </AuthShell>
   )
